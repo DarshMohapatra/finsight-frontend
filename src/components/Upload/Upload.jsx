@@ -136,6 +136,8 @@ export default function Upload() {
     setIsUploading(true); setError(''); setSuccessMsg('')
     setTransactions([]); setSummary(null); setScannedTxns([])
     try {
+      // Wake up backend (Render free tier cold starts can take ~30s)
+      try { await fetch(import.meta.env.VITE_API_URL || 'http://localhost:8000') } catch {}
       const res = await uploadAPI.upload(file, password)
       if (res.data.success) {
         setTransactions(res.data.transactions)
