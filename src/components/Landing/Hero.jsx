@@ -31,9 +31,8 @@ export default function Hero() {
   return (
     <section style={{ position:'relative', zIndex:1, minHeight:'100vh',
       display:'flex', alignItems:'center',
-      padding:'100px clamp(20px,5vw,80px) 60px' }}>
-      <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)',
-        gap:60, width:'100%', maxWidth:1200, margin:'0 auto', alignItems:'center' }}>
+      padding:'80px clamp(16px,5vw,80px) 40px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 w-full max-w-[1200px] mx-auto items-center">
 
         {/* Left — text */}
         <motion.div initial="hidden" animate="show" variants={stagger}>
@@ -43,7 +42,7 @@ export default function Hero() {
               borderRadius:100, padding:'6px 16px' }}>
             <span style={{ width:6, height:6, borderRadius:'50%', background:'#00f5a0',
               boxShadow:'0 0 8px #00f5a0', display:'inline-block' }} />
-            <span style={{ fontSize:10, fontFamily:"'DM Mono',monospace",
+            <span className="text-[8px] sm:text-[10px]" style={{ fontFamily:"'DM Mono',monospace",
               color:'#00f5a0', letterSpacing:2 }}>CUSTOM NLP + CONTEXTUAL FLAGGING + LLAMA 3.3</span>
           </motion.div>
 
@@ -103,8 +102,8 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Right — dashboard widget */}
-        <div style={{ display:'flex', justifyContent:'flex-end' }}>
+        {/* Right — dashboard widget (hidden on small mobile) */}
+        <div className="hidden sm:flex justify-center md:justify-end">
           <DashboardMockup />
         </div>
       </div>

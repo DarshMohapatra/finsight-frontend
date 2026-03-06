@@ -111,18 +111,17 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ maxWidth:1200, margin:'0 auto' }}>
+    <div className="max-w-[1200px] mx-auto">
 
       {/* Header + year selector */}
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-        marginBottom:32, flexWrap:'wrap', gap:16 }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 md:mb-8 gap-4">
         <div>
-          <h1 style={{ fontSize:28, fontWeight:800, margin:0, marginBottom:4 }}>Dashboard</h1>
+          <h1 className="text-2xl md:text-[28px] font-extrabold m-0 mb-1">Dashboard</h1>
           <p style={{ color:'rgba(255,255,255,0.35)', margin:0, fontSize:13 }}>
             {yearTxns.length} transactions · {years.length} year{years.length>1?'s':''} of data
           </p>
         </div>
-        <div style={{ display:'flex', gap:8 }}>
+        <div className="flex gap-2 flex-wrap">
           {years.map(y => (
             <button key={y} onClick={()=>setSelectedYear(y)}
               style={{ padding:'7px 18px', borderRadius:8, border:'none', cursor:'pointer',
@@ -139,7 +138,7 @@ export default function Dashboard() {
       <YearInReview stats={stats} yearTxns={yearTxns} currency={currency} />
 
       {/* Cash flow + Category side by side */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20, marginBottom:20 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
         <CashFlowChart data={monthlyData} currency={currency} />
         <CategoryChart data={categoryData} currency={currency} />
       </div>

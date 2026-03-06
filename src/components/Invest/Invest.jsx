@@ -46,11 +46,11 @@ export default function Invest() {
   }
 
   return (
-    <div className="p-8 pb-32 max-w-6xl mx-auto">
+    <div className="p-4 md:p-8 pb-32 max-w-6xl mx-auto">
       <div className="mb-8">
         
-        <h1 className="text-3xl font-black text-white flex items-center gap-3">
-          <Coins className="text-[#00f5a0]" size={28} />
+        <h1 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
+          <Coins className="text-[#00f5a0]" size={24} />
           MicroRoundUp India
         </h1>
         <p className="text-white/40 mt-2 max-w-2xl leading-relaxed">
@@ -83,7 +83,7 @@ export default function Invest() {
               <div className="text-[10px] font-mono text-[#00f5a0] tracking-[2px] mb-4 uppercase">
                 HISTORICAL XIRR SIMULATION (₹{threshold} THRESHOLD)
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.entries(data.xirr).map(([key, xdata]) => {
                   const meta = XIRR_NAMES[key] || { name: key, color: '#fff' }
                   return (

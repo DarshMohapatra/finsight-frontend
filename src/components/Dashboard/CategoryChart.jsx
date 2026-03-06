@@ -30,8 +30,9 @@ export default function CategoryChart({ data, currency }) {
   const height = Math.max(280, data.length * 36)
   return (
     <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}
+     className="p-4 md:p-6 h-full flex flex-col"
      style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)',
-        borderRadius:20, padding:24, height: '100%', display: 'flex', flexDirection: 'column' }}>
+        borderRadius:20 }}>
       <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10,
         color:'rgba(255,255,255,0.3)', letterSpacing:2, marginBottom:4 }}>BREAKDOWN</p>
       <h3 style={{ fontSize:16, fontWeight:700, marginBottom:20 }}>Spend by Category</h3>

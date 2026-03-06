@@ -55,8 +55,7 @@ export default function ChatPreview() {
   return (
     <section id="ai-advisor" style={{ position:'relative', zIndex:1,
       padding:'80px clamp(20px,5vw,80px)', maxWidth:1200, margin:'0 auto' }}>
-      <div style={{ display:'flex', alignItems:'center', gap:60,
-        flexWrap:'wrap', justifyContent:'space-between' }}>
+      <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 justify-between">
 
         <motion.div initial={{ opacity:0, x:-24 }} whileInView={{ opacity:1, x:0 }}
           viewport={{ once:true }} style={{ flex:'1 1 320px', maxWidth:480 }}>

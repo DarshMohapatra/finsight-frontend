@@ -23,8 +23,9 @@ function CustomTooltip({ active, payload, label, currency }) {
 export default function MonthlyChart({ data, currency }) {
   return (
     <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.5 }}
+      className="p-4 md:p-6 mb-5"
       style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)',
-        borderRadius:20, padding:24, marginBottom:20 }}>
+        borderRadius:20 }}>
       <p style={{ fontFamily:"'DM Mono',monospace", fontSize:10,
         color:'rgba(255,255,255,0.3)', letterSpacing:2, marginBottom:4 }}>MONTHLY WITHDRAWALS</p>
       <h3 style={{ fontSize:16, fontWeight:700, marginBottom:20 }}>Month-by-Month Spend</h3>

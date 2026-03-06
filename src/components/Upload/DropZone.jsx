@@ -17,7 +17,7 @@ export default function DropZone({ displayName, file, onDrop, onRemove }) {
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors duration-200
+      className={`border-2 border-dashed rounded-xl p-6 md:p-12 text-center cursor-pointer transition-colors duration-200
         ${isDragActive ? 'border-emerald-500 bg-emerald-500/10'
           : displayName ? 'border-emerald-500 bg-gray-800/80'
           : 'border-gray-700 hover:border-emerald-500/50 hover:bg-gray-800/50'}

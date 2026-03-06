@@ -28,7 +28,7 @@ export default function Features() {
         </h2>
       </motion.div>
 
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:20 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
         {FEATURES.map((f, i) => (
           <motion.div key={f.title}
             initial={{ opacity:0, y:28 }} whileInView={{ opacity:1, y:0 }}

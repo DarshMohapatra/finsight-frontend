@@ -54,12 +54,12 @@ export default function AIAdvisor() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl mx-auto h-[calc(100vh-140px)] flex flex-col">
-      <div className="mb-6 flex items-center justify-between">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl mx-auto h-[calc(100vh-120px)] md:h-[calc(100vh-140px)] flex flex-col">
+      <div className="mb-4 md:mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-[11px] font-mono tracking-[0.2em] text-[#00f5a0] mb-2">AI FINANCIAL ADVISOR</h2>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Bot className="w-8 h-8 text-[#00d4ff]" /> Ask FinSight
+          <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+            <Bot className="w-6 h-6 md:w-8 md:h-8 text-[#00d4ff]" /> Ask FinSight
           </h1>
         </div>
       </div>

@@ -141,10 +141,10 @@ export default function SmartCash() {
   }
 
   return (
-    <div className="p-8 pb-32 max-w-6xl mx-auto">
-      <div className="mb-8 animate-fade-in">
-        <h1 className="text-3xl font-black text-white flex items-center gap-3">
-          <CreditCard className="text-[#00d4ff]" size={28} />
+    <div className="p-4 md:p-8 pb-32 max-w-6xl mx-auto">
+      <div className="mb-6 md:mb-8 animate-fade-in">
+        <h1 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
+          <CreditCard className="text-[#00d4ff]" size={24} />
           Card Reward Maximiser
         </h1>
         <p className="text-white/40 mt-2">Find the best card in your wallet for every {currency==="IN"?"rupee":"dollar"} you spend.</p>

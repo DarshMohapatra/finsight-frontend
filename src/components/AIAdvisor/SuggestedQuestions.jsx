@@ -9,7 +9,7 @@ export default function SuggestedQuestions({ onSelect }) {
   ];
 
   return (
-    <div className="px-6 pb-4 flex flex-wrap gap-3">
+    <div className="px-3 md:px-6 pb-4 flex flex-wrap gap-2 md:gap-3">
       {suggestions.map((s, i) => (
         <button
           key={i}

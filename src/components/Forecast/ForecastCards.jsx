@@ -15,7 +15,7 @@ export default function ForecastCards({ data, currency, fmt, isHeadlineOnly, isL
     return (
       <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">AI Forecast</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">AI Forecast</h1>
           <p className="text-gray-400 text-sm">Predictive 6-month spending analysis based on your history.</p>
         </div>
         
