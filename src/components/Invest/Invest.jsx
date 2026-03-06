@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import useStore from '../../store/useStore'
+import { investAPI } from '../../api/client'
 import InvestInputs from './InvestInputs'
 import ProjectionCards from './ProjectionCards'
 import MonteCarloChart from './MonteCarloChart'
@@ -19,17 +20,12 @@ export default function Invest() {
     setLoading(true)
     setError('')
     
-    fetch('http://127.0.0.1:8000/api/invest/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transactions, threshold })
-    })
-      .then(r => r.json())
+    investAPI.analyze(transactions, threshold)
       .then(res => {
-        if (res.success) setData(res)
-        else setError(res.error || 'Failed to analyze investment data')
+        if (res.data.success) setData(res.data)
+        else setError(res.data.error || 'Failed to analyze investment data')
       })
-      .catch(err => setError(err.message))
+      .catch(err => setError(err.response?.data?.error || err.message))
       .finally(() => setLoading(false))
   }, [transactions, threshold])
 

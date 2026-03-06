@@ -29,7 +29,7 @@ export default function AIAdvisor() {
       const historyToSend = messages.filter(m => m.role === 'user' || m.role === 'assistant');
       
       // Inline Fetch Call directly to your local FastAPI backend
-      const response = await fetch("http://localhost:8000/api/chat", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

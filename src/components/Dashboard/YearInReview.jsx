@@ -34,7 +34,7 @@ function StatCard({ icon: Icon, label, value, sub, color = '#00f5a0', delay = 0 
 export default function YearInReview({ stats, yearTxns, currency }) {
   if (!stats) return null
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
       gap: 16, marginBottom: 32 }}>
       <StatCard icon={TrendingDown}   label="TOTAL SPENT"      value={fmt(stats.spent,currency)}    sub={`across ${yearTxns.length} transactions`}           color="#ff3c64"  delay={0}    />
       <StatCard icon={TrendingUp}     label="TOTAL RECEIVED"   value={fmt(stats.received,currency)} sub={`net saved: ${fmt(Math.abs(stats.saved),currency)}`} color="#00f5a0"  delay={0.04} />
