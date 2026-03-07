@@ -37,10 +37,10 @@ export default function GmailImport({ onImported, onClose }) {
     setStep('scanning')
     try {
       const res = await api.post('/api/gmail/scan', { access_token: accessToken, months })
+      console.warn('[Gmail Scan]', JSON.stringify(res.data, null, 2).slice(0, 500))
       if (!res.data.success) throw new Error(res.data.error)
       const found = res.data.emails || []
       setEmails(found)
-      if (res.data.debug) console.log('[Gmail Scan Debug]', JSON.stringify(res.data.debug, null, 2))
       setStep(found.length > 0 ? 'pick' : 'empty')
     } catch (e) {
       setErrorMsg(e.response?.data?.error || e.message || 'Scan failed')
