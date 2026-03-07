@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 const BANKS = ['HDFC', 'ICICI', 'SBI', 'Axis', 'Kotak', 'Chase', 'Barclays', 'HSBC']
 
-export default function GmailScanStep() {
+export default function GmailScanStep({ message }) {
   return (
     <div style={{ padding:'48px 28px', textAlign:'center' }}>
 
@@ -35,10 +35,10 @@ export default function GmailScanStep() {
       </div>
 
       <div style={{ fontSize:16, fontWeight:700, color:'#fff', marginBottom:8 }}>
-        Scanning your inbox…
+        {message || 'Scanning your inbox…'}
       </div>
       <div style={{ fontSize:13, color:'rgba(255,255,255,0.4)', marginBottom:28 }}>
-        Looking for bank statement emails with PDF attachments
+        {message ? 'Parsing and analyzing transactions' : 'Looking for bank statement emails with PDF attachments'}
       </div>
 
       {/* Scrolling bank names */}
