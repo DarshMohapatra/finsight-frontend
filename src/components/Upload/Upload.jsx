@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { Lock, AlertCircle, CheckCircle2, Eye, EyeOff, CloudDownload, RefreshCw } from 'lucide-react'
+import { Lock, AlertCircle, CheckCircle2, Eye, EyeOff, CloudDownload, RefreshCw, Mail } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { uploadAPI, authAPI } from '../../api/client'
 import DropZone           from './DropZone'
@@ -7,12 +7,12 @@ import Guardrails         from './Guardrails'
 import SummaryCards       from './SummaryCards'
 import FlaggedTable       from './FlaggedTable'
 import RecentTransactions from './RecentTransactions'
+import GmailImport        from '../GmailImport/GmailImport'
 
 function sym(currency) {
   return { IN:'₹', US:'$', UK:'£', CA:'C$', AU:'A$' }[currency] || '₹'
 }
 
-// Truncate long/garbled filenames
 function shortName(name) {
   if (!name) return ''
   const noExt = name.replace(/\.(pdf|csv|xlsx|xls)$/i, '')
@@ -22,17 +22,18 @@ function shortName(name) {
 }
 
 export default function Upload() {
-  const [file,         setFile]         = useState(null)
-  const [password,     setPassword]     = useState('')
-  const [isUploading,  setIsUploading]  = useState(false)
-  const [error,        setError]        = useState('')
-  const [successMsg,   setSuccessMsg]   = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [guardTxn,     setGuardTxn]     = useState('10000')
-  const [guardMonthly, setGuardMonthly] = useState('50000')
-  const [guardCats,    setGuardCats]    = useState([])
-  const [scannedTxns,  setScannedTxns]  = useState([])
-  const [loadingCloud, setLoadingCloud] = useState(false)
+  const [file,           setFile]           = useState(null)
+  const [password,       setPassword]       = useState('')
+  const [isUploading,    setIsUploading]    = useState(false)
+  const [error,          setError]          = useState('')
+  const [successMsg,     setSuccessMsg]     = useState('')
+  const [showPassword,   setShowPassword]   = useState(false)
+  const [guardTxn,       setGuardTxn]       = useState('10000')
+  const [guardMonthly,   setGuardMonthly]   = useState('50000')
+  const [guardCats,      setGuardCats]      = useState([])
+  const [scannedTxns,    setScannedTxns]    = useState([])
+  const [loadingCloud,   setLoadingCloud]   = useState(false)
+  const [showGmailModal, setShowGmailModal] = useState(false)  // ← Gmail dialog toggle
 
   const {
     setTransactions, setSummary, setCurrency,
@@ -40,9 +41,7 @@ export default function Upload() {
     uploadedFileName, setUploadedFileName,
   } = useStore()
 
-  // ── NO auto-load on mount — user must explicitly click Load Previous ──
-
-  // ── Manual load previous statement ───────────────────────────
+  // ── Manual load previous ──────────────────────────────────────
   async function handleLoadPrevious() {
     if (!user?.user_id) return
     setLoadingCloud(true); setError('')
@@ -60,7 +59,7 @@ export default function Upload() {
         const lastFile = recs[recs.length - 1]?._source_file || 'Cloud Backup'
         setUploadedFileName(lastFile)
         setScannedTxns([])
-        setSuccessMsg(`✅ Loaded ${recs.length} transactions. For individual files, use Profile → Statement History.`)
+        setSuccessMsg(`✅ Loaded ${recs.length} transactions. Switch between files in Profile → Statement History.`)
       } else {
         setError('No previous statement found. Upload one first.')
       }
@@ -70,17 +69,14 @@ export default function Upload() {
     setLoadingCloud(false)
   }
 
-  // ── Save to cloud with filename tag ──────────────────────────
+  // ── Save to cloud ─────────────────────────────────────────────
   async function saveToCloud(txns, filename) {
     if (!user?.user_id) return
-    try {
-      await authAPI.saveStatements(user.user_id, txns, filename)
-    } catch (e) {
-      console.warn('Cloud save failed:', e)
-    }
+    try { await authAPI.saveStatements(user.user_id, txns, filename) }
+    catch (e) { console.warn('Cloud save failed:', e) }
   }
 
-  // ── Guardrails scan ───────────────────────────────────────────
+  // ── Guardrails ────────────────────────────────────────────────
   function runScan(cats = guardCats) {
     const txnLimit     = parseInt(guardTxn.replace(/,/g,''))     || 10000
     const monthlyLimit = parseInt(guardMonthly.replace(/,/g,'')) || 50000
@@ -95,7 +91,7 @@ export default function Upload() {
     const scanned = transactions.map(t => {
       const reasons = []; let level = t.ALERT_LEVEL || 0
       if (t['WITHDRAWAL AMT'] >= txnLimit) {
-        reasons.push(`${S}${t['WITHDRAWAL AMT'].toLocaleString()} exceeds your ${S}${txnLimit.toLocaleString()} per-txn limit`)
+        reasons.push(`${S}${t['WITHDRAWAL AMT'].toLocaleString()} exceeds ${S}${txnLimit.toLocaleString()} per-txn limit`)
         if (level < 2) level = 2
       }
       if (cats.length > 0 && cats.includes(t.CATEGORY) && t['WITHDRAWAL AMT'] > 0) {
@@ -107,7 +103,7 @@ export default function Upload() {
         reasons.push(`Month total ${S}${Math.round(monthlyTotals[month]).toLocaleString()} exceeds ${S}${monthlyLimit.toLocaleString()} budget`)
         if (level < 1) level = 1
       }
-      return { ...t, _GUARD_LEVEL: level, _GUARD_REASON: reasons.length > 0 ? reasons.join(' | ') : (t.ALERT_REASON || '') }
+      return { ...t, _GUARD_LEVEL: level, _GUARD_REASON: reasons.join(' | ') || (t.ALERT_REASON || '') }
     })
     setScannedTxns(scanned)
   }
@@ -127,7 +123,7 @@ export default function Upload() {
     }
   }, [])
 
-  // ── Upload + analyze ──────────────────────────────────────────
+  // ── Upload ────────────────────────────────────────────────────
   const handleUpload = async () => {
     if (!file) return
     if (transactions.length > 0) {
@@ -136,8 +132,6 @@ export default function Upload() {
     setIsUploading(true); setError(''); setSuccessMsg('')
     setTransactions([]); setSummary(null); setScannedTxns([])
     try {
-      // Wake up backend (Render free tier cold starts can take ~30s)
-      try { await fetch(import.meta.env.VITE_API_URL || 'http://localhost:8000') } catch {}
       const res = await uploadAPI.upload(file, password)
       if (res.data.success) {
         setTransactions(res.data.transactions)
@@ -154,16 +148,22 @@ export default function Upload() {
     setIsUploading(false)
   }
 
+  // ── Gmail import callback ─────────────────────────────────────
+  function handleGmailImported(data) {
+    setSuccessMsg(`✅ Imported ${data.summary.txn_count} transactions from Gmail!`)
+    setShowGmailModal(false)
+  }
+
   const displayName = file?.name || uploadedFileName
   const isPdf       = displayName?.toLowerCase().endsWith('.pdf')
   const S           = sym(currency)
 
   return (
-    <div className="max-w-4xl mx-auto py-4 md:py-8">
+    <div className="max-w-4xl mx-auto py-8">
 
       {/* Header */}
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">
           Upload Statement
         </h1>
         <p className="text-gray-400">
@@ -190,18 +190,34 @@ export default function Upload() {
         <div className="flex-1 border-t border-gray-800" />
       </div>
 
-      {/* Load Previous button — explicit user action only, no auto-load */}
-      <button onClick={handleLoadPrevious} disabled={loadingCloud}
-        style={{ marginTop:12, width:'100%', padding:'12px',
-          background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)',
-          borderRadius:12, color: loadingCloud ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.6)',
-          fontSize:14, fontWeight:600, fontFamily:'inherit',
-          cursor: loadingCloud ? 'not-allowed' : 'pointer',
-          display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
-        {loadingCloud
-          ? <><RefreshCw size={15}/> Loading...</>
-          : <><CloudDownload size={15}/> Load Previous Statement</>}
-      </button>
+      {/* Two secondary buttons */}
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop:12 }}>
+
+        {/* Load Previous */}
+        <button onClick={handleLoadPrevious} disabled={loadingCloud}
+          style={{ padding:'12px',
+            background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)',
+            borderRadius:12, color: loadingCloud ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.6)',
+            fontSize:13, fontWeight:600, fontFamily:'inherit',
+            cursor: loadingCloud ? 'not-allowed' : 'pointer',
+            display:'flex', alignItems:'center', justifyContent:'center', gap:7 }}>
+          {loadingCloud
+            ? <><RefreshCw size={14}/> Loading...</>
+            : <><CloudDownload size={14}/> Load Previous</>}
+        </button>
+
+        {/* Import from Gmail */}
+        <button onClick={() => setShowGmailModal(true)}
+          style={{ padding:'12px',
+            background:'rgba(234,67,53,0.06)',
+            border:'1px solid rgba(234,67,53,0.2)',
+            borderRadius:12, color:'rgba(255,255,255,0.65)',
+            fontSize:13, fontWeight:600, fontFamily:'inherit',
+            cursor:'pointer',
+            display:'flex', alignItems:'center', justifyContent:'center', gap:7 }}>
+          <Mail size={14} style={{ color:'#ea4335' }}/> Import from Gmail
+        </button>
+      </div>
 
       {/* PDF password */}
       {isPdf && (
@@ -277,6 +293,14 @@ export default function Upload() {
           You can delete your data at any time from Profile settings.
         </p>
       </div>
+
+      {/* Gmail import dialog — rendered as overlay */}
+      {showGmailModal && (
+        <GmailImport
+          onImported={handleGmailImported}
+          onClose={() => setShowGmailModal(false)}
+        />
+      )}
     </div>
   )
 }
