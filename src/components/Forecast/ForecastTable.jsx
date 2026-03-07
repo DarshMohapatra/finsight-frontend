@@ -9,7 +9,7 @@ export default function ForecastTable({ data, currency, fmt }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-      className="bg-[#0b0e14] border border-white/[0.04] rounded-2xl p-6 h-full">
+      className="bg-[#0b0e14] border border-white/[0.04] rounded-2xl p-4 sm:p-6 h-full">
       <h3 className="text-[11px] font-mono tracking-[0.2em] text-cyan-400 mb-8 uppercase">6-MONTH FORECAST TABLE</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -29,15 +29,15 @@ export default function ForecastTable({ data, currency, fmt }) {
                   <span className="font-medium text-gray-200">{row.month}</span>
                 </td>
                 
-                <td className="py-5 text-right font-mono font-bold text-white text-[15px]">
+                <td className="py-3 sm:py-5 text-right font-mono font-bold text-white text-[13px] sm:text-[15px]">
                   {fmt(row.predicted, currency)}
                 </td>
-                
-                <td className="py-5 text-right font-mono text-gray-500 text-[13px]">
+
+                <td className="py-3 sm:py-5 text-right font-mono text-gray-500 text-[11px] sm:text-[13px]">
                   {fmt(row.lowest, currency)}
                 </td>
-                
-                <td className="py-5 text-right font-mono text-gray-500 text-[13px]">
+
+                <td className="py-3 sm:py-5 text-right font-mono text-gray-500 text-[11px] sm:text-[13px]">
                   {fmt(row.highest, currency)}
                 </td>
               </tr>

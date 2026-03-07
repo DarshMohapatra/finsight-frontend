@@ -21,8 +21,8 @@ export default function FlaggedTable({ S, scannedTxns, transactions }) {
           FLAGGED TRANSACTIONS — {flagged.length} SUSPICIOUS
         </span>
       </div>
-      <div className="overflow-x-auto -mx-4 md:mx-0">
-        <table className="w-full text-sm min-w-[800px]">
+      <div className="overflow-x-auto -mx-4 md:mx-0 -mb-2">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="text-gray-500 text-xs font-mono">
               <th className="text-left pb-3 pl-4 md:pl-0 w-[90px]">Date</th>

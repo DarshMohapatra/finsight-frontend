@@ -87,9 +87,9 @@ export default function Invest() {
                 {Object.entries(data.xirr).map(([key, xdata]) => {
                   const meta = XIRR_NAMES[key] || { name: key, color: '#fff' }
                   return (
-                    <div key={key} className="p-5 bg-white/5 border border-white/10 rounded-xl" style={{ borderColor: `${meta.color}30` }}>
+                    <div key={key} className="p-3 sm:p-5 bg-white/5 border border-white/10 rounded-xl" style={{ borderColor: `${meta.color}30` }}>
                       <div className="text-[11px] font-mono mb-2" style={{ color: meta.color }}>{meta.name}</div>
-                      <div className="text-[22px] font-black" style={{ color: meta.color }}>{xdata.xirr_pct}%</div>
+                      <div className="text-lg sm:text-[22px] font-black" style={{ color: meta.color }}>{xdata.xirr_pct}%</div>
                       <div className="text-[10px] text-white/40 mt-0.5">XIRR</div>
                       
                       <div className="mt-4 text-xs text-white/60 space-y-1">

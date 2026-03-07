@@ -51,7 +51,7 @@ export default function MonteCarloChart({ mcData }) {
         MONTE CARLO PROJECTION — 1000 SIMULATIONS
       </div>
       
-      <div className="h-[380px] w-full p-4 bg-[#0d1420] rounded-xl border border-white/5">
+      <div className="h-[260px] sm:h-[320px] md:h-[380px] w-full p-3 sm:p-4 bg-[#0d1420] rounded-xl border border-white/5">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 0 }}>
             <XAxis dataKey="year" stroke="#555" tick={{fill: '#555', fontSize: 11}} axisLine={false} tickLine={false} />

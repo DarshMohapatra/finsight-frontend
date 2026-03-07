@@ -22,13 +22,13 @@ export default function BestCardBanner({ suggestions, currency }) {
           
           return (
             <div key={i} className="p-5 bg-white/5 border border-[#00d4ff]/20 rounded-xl relative overflow-hidden">
-              <div className="flex justify-between items-start mb-3 relative z-10">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3 relative z-10">
                 <div>
-                  <div className="font-bold text-[#e8eaf0] text-[15px]">{s.card.bank} {s.card.card_name}</div>
+                  <div className="font-bold text-[#e8eaf0] text-sm sm:text-[15px]">{s.card.bank} {s.card.card_name}</div>
                   <div className="text-[11px] text-white/40 font-mono mt-1">{fee} • {s.card.network}</div>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-black text-[#00f5a0]">{sym}{Math.round(s.net).toLocaleString()}</div>
+                <div className="sm:text-right">
+                  <div className="text-base sm:text-lg font-black text-[#00f5a0]">{sym}{Math.round(s.net).toLocaleString()}</div>
                   <div className="text-[10px] text-white/40">/yr net</div>
                 </div>
               </div>

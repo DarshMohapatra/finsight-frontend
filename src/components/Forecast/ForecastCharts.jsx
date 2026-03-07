@@ -65,7 +65,7 @@ export default function ForecastChart({ data, currency, fmt }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-      className="bg-[#0f172a] border border-slate-800/60 rounded-2xl p-6 md:p-8 mb-8 shadow-xl">
+      className="bg-[#0f172a] border border-slate-800/60 rounded-2xl p-4 sm:p-6 md:p-8 mb-8 shadow-xl">
       
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <h3 className="text-[17px] font-semibold flex items-center gap-2.5 text-slate-100 font-sans tracking-tight">
@@ -73,7 +73,7 @@ export default function ForecastChart({ data, currency, fmt }) {
           6-Month Spending Trajectory
         </h3>
         
-        <div className="flex flex-wrap items-center gap-6 text-[11px] font-semibold text-slate-400 uppercase tracking-widest bg-slate-900/50 px-4 py-2 rounded-lg border border-slate-800/80">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-widest bg-slate-900/50 px-3 sm:px-4 py-2 rounded-lg border border-slate-800/80">
           <span className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-slate-300"></div> Historical
           </span>
@@ -86,7 +86,7 @@ export default function ForecastChart({ data, currency, fmt }) {
         </div>
       </div>
 
-      <div className="h-[340px] w-full">
+      <div className="h-[240px] sm:h-[300px] md:h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             {/* Elegant, muted gradient definition */}

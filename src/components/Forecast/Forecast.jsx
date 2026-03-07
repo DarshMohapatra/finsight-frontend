@@ -83,7 +83,7 @@ export default function Forecast() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto pb-12">
+    <div className="max-w-5xl mx-auto pb-12 px-0 sm:px-0">
       <ForecastCards data={data} currency={currency} fmt={fmt} isHeadlineOnly={true} />
       
       <ForecastChart data={data} currency={currency} fmt={fmt} />

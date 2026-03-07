@@ -15,9 +15,9 @@ export default function CashbackTable({ summary, currency }) {
           
           return (
             <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-xl">
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mb-2">
                 <div className="font-bold text-[#e8eaf0] text-sm">{row.CATEGORY}</div>
-                <div className="text-[11px] font-mono text-[#00f5a0]">Use → {row.best_card}</div>
+                <div className="text-[10px] sm:text-[11px] font-mono text-[#00f5a0] truncate">Use → {row.best_card}</div>
               </div>
               
               <div className="text-xs text-white/40 mb-3">

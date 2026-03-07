@@ -10,21 +10,22 @@ function StatCard({ icon: Icon, label, value, sub, color = '#00f5a0', delay = 0 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
+      className="p-3 sm:p-4 md:p-5"
       style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 16, padding: '20px 20px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        borderRadius: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ width: 36, height: 36, borderRadius: 10,
+        <div className="w-8 h-8 sm:w-9 sm:h-9" style={{ borderRadius: 10,
           background: `${color}18`, border: `1px solid ${color}28`,
           display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon size={17} style={{ color }} />
+          <Icon size={15} style={{ color }} />
         </div>
-        <span style={{ fontSize: 9, fontFamily: "'DM Mono',monospace",
+        <span className="text-[7px] sm:text-[9px]" style={{ fontFamily: "'DM Mono',monospace",
           color: 'rgba(255,255,255,0.25)', letterSpacing: 1.5 }}>{label}</span>
       </div>
       <div>
-        <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'DM Mono',monospace",
-          color, lineHeight: 1.1, wordBreak: 'break-word' }}>{value}</div>
-        {sub && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)',
+        <div className="text-base sm:text-lg md:text-[22px]" style={{ fontWeight: 800, fontFamily: "'DM Mono',monospace",
+          color, lineHeight: 1.1, wordBreak: 'break-word', overflowWrap: 'anywhere' }}>{value}</div>
+        {sub && <div className="text-[9px] sm:text-[11px]" style={{ color: 'rgba(255,255,255,0.35)',
           marginTop: 4, lineHeight: 1.4 }}>{sub}</div>}
       </div>
     </motion.div>

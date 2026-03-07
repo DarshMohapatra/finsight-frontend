@@ -18,14 +18,14 @@ export default function ChatInput({ onSend, isTyping }) {
   };
 
   return (
-    <div className="p-4 border-t border-white/[0.04] bg-[#0b0e14]/90 backdrop-blur-xl">
+    <div className="p-2 sm:p-4 border-t border-white/[0.04] bg-[#0b0e14]/90 backdrop-blur-xl">
       <div className="relative flex items-center bg-[#151a26] border border-white/[0.08] rounded-xl focus-within:border-cyan-500/50 focus-within:ring-1 focus-within:ring-cyan-500/50 transition-all shadow-inner">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask anything about your spending, budget, or anomalies..."
-          className="w-full bg-transparent border-none text-white placeholder-gray-500 text-[14.5px] px-5 py-4 focus:ring-0 resize-none max-h-32 min-h-[56px] custom-scrollbar rounded-xl outline-none"
+          placeholder="Ask about spending, budget, anomalies..."
+          className="w-full bg-transparent border-none text-white placeholder-gray-500 text-[13px] sm:text-[14.5px] px-3 py-3 sm:px-5 sm:py-4 focus:ring-0 resize-none max-h-32 min-h-[48px] sm:min-h-[56px] custom-scrollbar rounded-xl outline-none"
           rows={1}
           disabled={isTyping}
         />

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import fmt from './fmt'
 
-const PALETTE = ['#00f5a0', '#00d4ff', '#7b61ff', '#f59e0b', '#ff3c64', '#ec4899', '#64748b']
+const PALETTE = ['#ef4444', '#f87171', '#dc2626', '#fb923c', '#f43f5e', '#e11d48', '#b91c1c']
 
 function StackedTooltip({ active, payload, label, currency }) {
   if (!active || !payload?.length) return null
@@ -73,7 +73,7 @@ export default function MonthlyChart({ data, currency, sourceData, sourceFiles }
         {hasMultipleSources ? 'Month-by-Month Spend (by Bank/Card)' : 'Month-by-Month Spend'}
       </h3>
 
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={220}>
         {hasMultipleSources ? (
           <BarChart data={sourceData} margin={{ top:5, right:8, left:-10, bottom:0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false}/>
@@ -91,8 +91,8 @@ export default function MonthlyChart({ data, currency, sourceData, sourceFiles }
           <BarChart data={data} margin={{ top:5, right:8, left:-10, bottom:0 }}>
             <defs>
               <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00f5a0" stopOpacity={0.9}/>
-                <stop offset="100%" stopColor="#00d4ff" stopOpacity={0.6}/>
+                <stop offset="0%" stopColor="#ef4444" stopOpacity={0.9}/>
+                <stop offset="100%" stopColor="#dc2626" stopOpacity={0.6}/>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false}/>

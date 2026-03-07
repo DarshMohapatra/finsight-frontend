@@ -30,7 +30,7 @@ export default function CashFlowChart({ data, currency }) {
         color:'rgba(255,255,255,0.3)', letterSpacing:2, marginBottom:4 }}>MONTHLY TREND</p>
       <h3 style={{ fontSize:16, fontWeight:700, marginBottom:20 }}>Cash Flow Overview</h3>
        <div style={{ margin: 'auto 0' }}>
-        <ResponsiveContainer width="100%" height={240}>
+        <ResponsiveContainer width="100%" height={200}>
           <AreaChart data={data} margin={{ top:5, right:10, left:-10, bottom:0 }}>
             <defs>
               <linearGradient id="spentGrad" x1="0" y1="0" x2="0" y2="1">

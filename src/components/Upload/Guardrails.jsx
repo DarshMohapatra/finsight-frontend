@@ -1,5 +1,5 @@
 export default function Guardrails({ S, guardTxn, setGuardTxn, guardMonthly, setGuardMonthly,
-  guardCats, setGuardCats, guardSource, setGuardSource, sourceFiles,
+  guardCats, setGuardCats,
   transactions, onScan, onRemoveCat }) {
 
   return (
@@ -9,7 +9,7 @@ export default function Guardrails({ S, guardTxn, setGuardTxn, guardMonthly, set
         <span className="text-[10px] text-gray-500">Set limits, then Scan</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-4">
         {/* Max per transaction */}
         <div>
           <label className="text-[10px] text-gray-400 font-mono tracking-[1px] mb-1 block">MAX PER TRANSACTION ({S})</label>
@@ -54,20 +54,6 @@ export default function Guardrails({ S, guardTxn, setGuardTxn, guardMonthly, set
           )}
         </div>
 
-        {/* Source file / card filter */}
-        <div>
-          <label className="text-[10px] text-gray-400 font-mono tracking-[1px] mb-1 block">FILTER BY CARD / BANK</label>
-          <select
-            value={guardSource}
-            onChange={e => setGuardSource(e.target.value)}
-            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
-          >
-            <option value="">All Statements</option>
-            {sourceFiles.map(src => (
-              <option key={src} value={src}>{src.replace(/\.(pdf|csv|xlsx|xls)$/i, '')}</option>
-            ))}
-          </select>
-        </div>
       </div>
 
       <button onClick={onScan}

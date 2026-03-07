@@ -34,7 +34,6 @@ export default function Upload() {
   const [scannedTxns,    setScannedTxns]    = useState([])
   const [loadingCloud,   setLoadingCloud]   = useState(false)
   const [showGmailModal, setShowGmailModal] = useState(false)
-  const [guardSource,    setGuardSource]    = useState('')      // source file filter for guardrails
 
   const {
     setTransactions, setSummary, setCurrency,
@@ -81,15 +80,12 @@ export default function Upload() {
   // All checks run simultaneously. Watch categories add to flagging.
   // When watch cats are selected, flagged results prioritize those categories.
   // Source filter limits to a specific card/bank statement.
-  function runScan(cats = guardCats, source = guardSource) {
+  function runScan(cats = guardCats) {
     const txnLimit     = parseInt(guardTxn.replace(/,/g,''))     || 10000
     const monthlyLimit = parseInt(guardMonthly.replace(/,/g,'')) || 50000
     const S = sym(currency)
 
-    // Filter by source file if selected
-    const pool = source
-      ? transactions.filter(t => t._source_file === source)
-      : transactions
+    const pool = transactions
 
     const monthlyTotals = {}
     pool.forEach(t => {
@@ -138,10 +134,9 @@ export default function Upload() {
   function removeGuardCat(cat) {
     const updated = guardCats.filter(c => c !== cat)
     setGuardCats(updated)
-    runScan(updated, guardSource)
+    runScan(updated)
   }
 
-  const sourceFiles = [...new Set(transactions.map(t => t._source_file).filter(Boolean))]
 
   // ── Dropzone ──────────────────────────────────────────────────
   const onDrop = useCallback((acceptedFiles) => {
@@ -220,7 +215,7 @@ export default function Upload() {
       </div>
 
       {/* Two secondary buttons */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop:12 }} className="!grid-cols-1 sm:!grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
 
         {/* Load Previous */}
         <button onClick={handleLoadPrevious} disabled={loadingCloud}
@@ -304,10 +299,8 @@ export default function Upload() {
             guardTxn={guardTxn}         setGuardTxn={setGuardTxn}
             guardMonthly={guardMonthly} setGuardMonthly={setGuardMonthly}
             guardCats={guardCats}       setGuardCats={setGuardCats}
-            guardSource={guardSource}   setGuardSource={setGuardSource}
-            sourceFiles={sourceFiles}
             transactions={transactions}
-            onScan={() => runScan(guardCats, guardSource)}
+            onScan={() => runScan(guardCats)}
             onRemoveCat={removeGuardCat}
           />
           <SummaryCards S={S} summary={summary} transactions={transactions} scannedTxns={scannedTxns} />

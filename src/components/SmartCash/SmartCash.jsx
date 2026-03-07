@@ -48,7 +48,30 @@ export default function SmartCash() {
       .catch(() => {})
   }, [user?.user_id])
 
-  // If no saved cards, default to free cards
+  // Auto-detect cards from uploaded statements
+  useEffect(() => {
+    if (availableCards.length === 0 || transactions.length === 0) return
+    const sources = [...new Set(transactions.map(t => t._source_file).filter(Boolean))]
+    if (sources.length === 0) return
+    const detected = []
+    sources.forEach(src => {
+      const lower = src.toLowerCase()
+      availableCards.forEach(c => {
+        const bankLower = (c.bank || '').toLowerCase()
+        if (bankLower && lower.includes(bankLower) && !detected.includes(c.card_id)) {
+          detected.push(c.card_id)
+        }
+      })
+    })
+    if (detected.length > 0) {
+      setSelectedWallet(prev => {
+        const merged = [...new Set([...prev, ...detected])]
+        return merged
+      })
+    }
+  }, [availableCards, transactions])
+
+  // If no saved cards and nothing detected, default to free cards
   useEffect(() => {
     if (savedCards.length === 0 && availableCards.length > 0 && selectedWallet.length === 0) {
       const duds = availableCards.filter(c => c.annual_fee === 0).slice(0, 3).map(c => c.card_id)
@@ -76,6 +99,35 @@ export default function SmartCash() {
       setError('Failed to save card — please try again.')
     }
     setSavingCard(false)
+  }
+
+  // When user toggles a card in the wallet grid, save/remove from DB
+  const handleWalletChange = async (newIds) => {
+    setSelectedWallet(newIds)
+    if (!user?.user_id) return
+    const added = newIds.filter(id => !selectedWallet.includes(id))
+    const removed = selectedWallet.filter(id => !newIds.includes(id))
+    // Save newly selected cards
+    for (const cardId of added) {
+      if (!savedCards.some(c => c.card_id === cardId)) {
+        try {
+          const res = await cardsAPI.save(user.user_id, cardId, '', '')
+          if (res.data?.success) {
+            setSavedCards(prev => [res.data.card, ...prev])
+          }
+        } catch {}
+      }
+    }
+    // Remove deselected cards from DB
+    for (const cardId of removed) {
+      const dbCard = savedCards.find(c => c.card_id === cardId)
+      if (dbCard) {
+        try {
+          await cardsAPI.remove(user.user_id, dbCard.id)
+          setSavedCards(prev => prev.filter(c => c.id !== dbCard.id))
+        } catch {}
+      }
+    }
   }
 
   const handleDeleteCard = async (cardDbId, cardId) => {
@@ -194,7 +246,7 @@ export default function SmartCash() {
   }
 
   return (
-    <div className="p-4 md:p-8 pb-32 max-w-6xl mx-auto">
+    <div className="p-2 sm:p-4 md:p-8 pb-32 max-w-6xl mx-auto">
       <div className="mb-6 md:mb-8 animate-fade-in">
         <h1 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
           <CreditCard className="text-[#00d4ff]" size={24} />
@@ -205,7 +257,7 @@ export default function SmartCash() {
 
       {/* ── YOUR SAVED CARDS ─────────────────────────────────────── */}
       {user?.user_id && (
-        <div className="mb-6 p-5 bg-white/[0.03] border border-white/10 rounded-xl">
+        <div className="mb-6 p-3 sm:p-5 bg-white/[0.03] border border-white/10 rounded-xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-mono tracking-widest text-[#f59e0b]">YOUR SAVED CARDS</h3>
             <button onClick={() => setShowAddCard(!showAddCard)}
@@ -278,7 +330,7 @@ export default function SmartCash() {
       <CardSelector
         availableCards={availableCards}
         selectedIds={selectedWallet}
-        onChange={setSelectedWallet}
+        onChange={handleWalletChange}
         currency={currency}
       />
 
@@ -299,7 +351,7 @@ export default function SmartCash() {
 
       {results && (
         <div className="mt-12 animate-fade-in">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             <Metric title="TOTAL SPEND" value={`${sym}${results.results.reduce((a,b)=>a+b.AMOUNT,0).toLocaleString(undefined,{maximumFractionDigits:0})}`} />
             <Metric title="BEST CASHBACK" value={`${sym}${results.results.reduce((a,b)=>a+b.BEST_CASHBACK,0).toLocaleString(undefined,{maximumFractionDigits:0})}`} color="text-[#00f5a0]" />
             <Metric title="EXTRA VS 1% CARD" value={`${sym}${results.results.reduce((a,b)=>a+b.EXTRA,0).toLocaleString(undefined,{maximumFractionDigits:0})}`} color="text-[#00d4ff]" />
@@ -313,7 +365,7 @@ export default function SmartCash() {
           <CashbackTable summary={results.summary} currency={currency} />
 
           {celebrations.length > 0 && (
-            <div className="mt-8 p-6 bg-gradient-to-br from-[#00f5a0]/10 to-[#00d4ff]/5 border border-[#00f5a0]/30 rounded-xl">
+            <div className="mt-8 p-4 sm:p-6 bg-gradient-to-br from-[#00f5a0]/10 to-[#00d4ff]/5 border border-[#00f5a0]/30 rounded-xl">
               <div className="text-[10px] font-mono text-[#00f5a0] tracking-[2px] mb-4">MILESTONE CELEBRATIONS</div>
               <div className="space-y-3">
                 {celebrations.map((c, i) => (
@@ -332,10 +384,10 @@ export default function SmartCash() {
               <div className="text-xs text-white/40 mb-4">If you use the wrong card for these categories, here's what you leave on the table:</div>
               <div className="space-y-3">
                 {missedAlerts.map((m, i) => (
-                  <div key={i} className="p-4 bg-[#ff3c64]/10 border border-[#ff3c64]/20 rounded-xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-bold text-[#e8eaf0]">{m.category}</span>
-                      <span className="text-sm font-black text-[#ff3c64]">-{sym}{Math.round(m.amount).toLocaleString()}</span>
+                  <div key={i} className="p-3 sm:p-4 bg-[#ff3c64]/10 border border-[#ff3c64]/20 rounded-xl">
+                    <div className="flex justify-between items-center gap-2 mb-2">
+                      <span className="text-xs sm:text-sm font-bold text-[#e8eaf0]">{m.category}</span>
+                      <span className="text-xs sm:text-sm font-black text-[#ff3c64] flex-shrink-0">-{sym}{Math.round(m.amount).toLocaleString()}</span>
                     </div>
                     <div className="text-xs text-white/50 leading-relaxed">
                       Using <span className="text-[#ff3c64] font-semibold">{m.worst}</span> instead of <span className="text-[#00f5a0] font-semibold">{m.best}</span> costs you rewards across {m.txns} transactions.
@@ -355,9 +407,9 @@ export default function SmartCash() {
 
 function Metric({ title, value, color = "text-white" }) {
   return (
-    <div className="p-5 bg-white/5 border border-white/10 rounded-2xl text-center">
-      <div className="text-[10px] font-mono text-white/40 tracking-[1px] mb-2">{title}</div>
-      <div className={`text-2xl font-black font-mono ${color}`}>{value}</div>
+    <div className="p-3 sm:p-5 bg-white/5 border border-white/10 rounded-2xl text-center">
+      <div className="text-[9px] sm:text-[10px] font-mono text-white/40 tracking-[1px] mb-1 sm:mb-2">{title}</div>
+      <div className={`text-lg sm:text-2xl font-black font-mono ${color} break-all`}>{value}</div>
     </div>
   )
 }

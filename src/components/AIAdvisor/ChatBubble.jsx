@@ -13,7 +13,7 @@ export default function ChatBubble({ role, content }) {
   };
 
   return (
-    <div className={`flex gap-4 max-w-[85%] ${isUser ? 'self-end flex-row-reverse' : 'self-start'} items-end group`}>
+    <div className={`flex gap-2 sm:gap-4 max-w-[92%] sm:max-w-[85%] ${isUser ? 'self-end flex-row-reverse' : 'self-start'} items-end group`}>
       {/* Avatar */}
       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mb-1 shadow-lg ${
         isUser 
@@ -24,7 +24,7 @@ export default function ChatBubble({ role, content }) {
       </div>
 
       {/* Bubble */}
-      <div className={`px-6 py-4 relative shadow-xl ${
+      <div className={`px-3 py-3 sm:px-6 sm:py-4 relative shadow-xl ${
         isUser 
           ? 'bg-gradient-to-br from-[#00f5a0]/10 to-[#00d4ff]/10 border border-[#00f5a0]/30 rounded-2xl rounded-br-sm text-cyan-50' 
           : 'bg-[#151a26] border border-white/[0.08] rounded-2xl rounded-bl-sm text-gray-300 leading-relaxed font-sans text-[14.5px]'

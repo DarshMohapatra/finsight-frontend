@@ -6,14 +6,14 @@ export default function InstrumentCard({ inst }) {
   const r_colors = r_vals.map(r => r > 0 && r === max_r ? '#00f5a0' : '#e8eaf0')
 
   return (
-    <div className="p-5 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl relative overflow-hidden mb-4">
+    <div className="p-3 sm:p-5 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl relative overflow-hidden mb-4">
       <div 
         className="absolute top-0 left-0 w-full h-[3px]" 
         style={{ background: `linear-gradient(90deg, ${inst.risk_color}, ${inst.risk_color}80, transparent)` }} 
       />
       
-      <div className="flex items-center justify-between mb-1 mt-1">
-        <div className="text-[15px] font-bold text-[#e8eaf0] flex items-center">
+      <div className="flex items-center justify-between gap-2 mb-1 mt-1">
+        <div className="text-[13px] sm:text-[15px] font-bold text-[#e8eaf0] flex items-center flex-wrap">
           {inst.name}
           {inst.tax_benefit && (
             <span className="bg-gradient-to-r from-[#00f5a0] to-[#00d4ff] text-black text-[9px] font-bold px-2 py-0.5 rounded ml-2">
