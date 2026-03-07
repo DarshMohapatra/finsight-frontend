@@ -33,7 +33,8 @@ export default function Upload() {
   const [guardCats,      setGuardCats]      = useState([])
   const [scannedTxns,    setScannedTxns]    = useState([])
   const [loadingCloud,   setLoadingCloud]   = useState(false)
-  const [showGmailModal, setShowGmailModal] = useState(false)  // ← Gmail dialog toggle
+  const [showGmailModal, setShowGmailModal] = useState(false)
+  const [guardSource,    setGuardSource]    = useState('')      // source file filter for guardrails
 
   const {
     setTransactions, setSummary, setCurrency,
@@ -77,31 +78,49 @@ export default function Upload() {
   }
 
   // ── Guardrails ────────────────────────────────────────────────
-  function runScan(cats = guardCats) {
+  // Feature 2: if watch categories selected → ONLY filter by those
+  //            if none selected → use per-txn + monthly limits
+  // Feature 3: filter by source file (card/bank) if selected
+  function runScan(cats = guardCats, source = guardSource) {
     const txnLimit     = parseInt(guardTxn.replace(/,/g,''))     || 10000
     const monthlyLimit = parseInt(guardMonthly.replace(/,/g,'')) || 50000
     const S = sym(currency)
+
+    // Filter by source file if selected
+    const pool = source
+      ? transactions.filter(t => t._source_file === source)
+      : transactions
+
     const monthlyTotals = {}
-    transactions.forEach(t => {
+    pool.forEach(t => {
       if (t['WITHDRAWAL AMT'] > 0) {
         const month = t.DATE?.substring(0,7)
         monthlyTotals[month] = (monthlyTotals[month] || 0) + t['WITHDRAWAL AMT']
       }
     })
-    const scanned = transactions.map(t => {
+
+    const useWatchMode = cats.length > 0
+
+    const scanned = pool.map(t => {
       const reasons = []; let level = t.ALERT_LEVEL || 0
-      if (t['WITHDRAWAL AMT'] >= txnLimit) {
-        reasons.push(`${S}${t['WITHDRAWAL AMT'].toLocaleString()} exceeds ${S}${txnLimit.toLocaleString()} per-txn limit`)
-        if (level < 2) level = 2
-      }
-      if (cats.length > 0 && cats.includes(t.CATEGORY) && t['WITHDRAWAL AMT'] > 0) {
-        reasons.push(`'${t.CATEGORY}' is on your watch list`)
-        if (level < 2) level = 2
-      }
-      const month = t.DATE?.substring(0,7)
-      if (monthlyTotals[month] > monthlyLimit && t['WITHDRAWAL AMT'] > 0) {
-        reasons.push(`Month total ${S}${Math.round(monthlyTotals[month]).toLocaleString()} exceeds ${S}${monthlyLimit.toLocaleString()} budget`)
-        if (level < 1) level = 1
+
+      if (useWatchMode) {
+        // Strict watch-category mode: only flag transactions in watched categories
+        if (cats.includes(t.CATEGORY) && t['WITHDRAWAL AMT'] > 0) {
+          reasons.push(`'${t.CATEGORY}' is on your watch list`)
+          if (level < 2) level = 2
+        }
+      } else {
+        // Default mode: per-txn and monthly limits
+        if (t['WITHDRAWAL AMT'] >= txnLimit) {
+          reasons.push(`${S}${t['WITHDRAWAL AMT'].toLocaleString()} exceeds ${S}${txnLimit.toLocaleString()} per-txn limit`)
+          if (level < 2) level = 2
+        }
+        const month = t.DATE?.substring(0,7)
+        if (monthlyTotals[month] > monthlyLimit && t['WITHDRAWAL AMT'] > 0) {
+          reasons.push(`Month total ${S}${Math.round(monthlyTotals[month]).toLocaleString()} exceeds ${S}${monthlyLimit.toLocaleString()} budget`)
+          if (level < 1) level = 1
+        }
       }
       return { ...t, _GUARD_LEVEL: level, _GUARD_REASON: reasons.join(' | ') || (t.ALERT_REASON || '') }
     })
@@ -111,8 +130,11 @@ export default function Upload() {
   function removeGuardCat(cat) {
     const updated = guardCats.filter(c => c !== cat)
     setGuardCats(updated)
-    runScan(updated)
+    runScan(updated, guardSource)
   }
+
+  // Get unique source files for the filter
+  const sourceFiles = [...new Set(transactions.map(t => t._source_file).filter(Boolean))]
 
   // ── Dropzone ──────────────────────────────────────────────────
   const onDrop = useCallback((acceptedFiles) => {
@@ -275,8 +297,10 @@ export default function Upload() {
             guardTxn={guardTxn}         setGuardTxn={setGuardTxn}
             guardMonthly={guardMonthly} setGuardMonthly={setGuardMonthly}
             guardCats={guardCats}       setGuardCats={setGuardCats}
+            guardSource={guardSource}   setGuardSource={setGuardSource}
+            sourceFiles={sourceFiles}
             transactions={transactions}
-            onScan={() => runScan()}
+            onScan={() => runScan(guardCats, guardSource)}
             onRemoveCat={removeGuardCat}
           />
           <SummaryCards S={S} summary={summary} transactions={transactions} scannedTxns={scannedTxns} />

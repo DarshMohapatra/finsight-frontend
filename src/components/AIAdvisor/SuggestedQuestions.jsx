@@ -1,11 +1,14 @@
 import React from 'react';
-import { Sparkles, AlertTriangle, TrendingDown } from 'lucide-react';
+import { Sparkles, AlertTriangle, TrendingDown, BarChart3, GitCompare, User } from 'lucide-react';
 
 export default function SuggestedQuestions({ onSelect }) {
   const suggestions = [
     { text: "What is my biggest spending category?", icon: TrendingDown },
-    { text: "Are there any suspicious anomalies?", icon: AlertTriangle },
-    { text: "Give me a 3-step plan to save more.", icon: Sparkles }
+    { text: "Compare my last 3 months — am I spending more or less?", icon: BarChart3 },
+    { text: "Are there any suspicious anomalies in my data?", icon: AlertTriangle },
+    { text: "Compare my different bank statements side by side", icon: GitCompare },
+    { text: "Based on my profile and data, give me a savings plan", icon: User },
+    { text: "Which categories grew the most recently?", icon: Sparkles },
   ];
 
   return (

@@ -65,4 +65,13 @@ export const investAPI = {
     api.post('/api/invest/analyze', { transactions, threshold }),
 }
 
+// ── SAVED CARDS ──────────────────────────────────────────────────
+export const cardsAPI = {
+  load:   (user_id)                          => api.get(`/auth/cards/${user_id}`),
+  save:   (user_id, card_id, card_number, nickname) =>
+    api.post('/auth/cards', { user_id, card_id, card_number, nickname }),
+  remove: (user_id, card_db_id)              =>
+    api.delete('/auth/cards', { data: { user_id, card_db_id } }),
+}
+
 export default api

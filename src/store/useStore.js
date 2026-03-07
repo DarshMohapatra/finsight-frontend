@@ -44,10 +44,13 @@ setUploadedFileName: (name) => set({ uploadedFileName: name }),
     setYirData: (yirData) => set({ yirData }),
 
     //Chat
-
     chatHistory: [],
     addMessage: (msg) => set((s) => ({ chatHistory: [...s.chatHistory, msg] })),
-    clearChat: () => set({ chatHistory: [] })
+    clearChat: () => set({ chatHistory: [] }),
+
+    //Saved Cards
+    savedCards: [],
+    setSavedCards: (savedCards) => set({ savedCards }),
 }))
 
 export default useStore
