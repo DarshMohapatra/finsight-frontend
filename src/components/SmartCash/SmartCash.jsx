@@ -101,35 +101,6 @@ export default function SmartCash() {
     setSavingCard(false)
   }
 
-  // When user toggles a card in the wallet grid, save/remove from DB
-  const handleWalletChange = async (newIds) => {
-    setSelectedWallet(newIds)
-    if (!user?.user_id) return
-    const added = newIds.filter(id => !selectedWallet.includes(id))
-    const removed = selectedWallet.filter(id => !newIds.includes(id))
-    // Save newly selected cards
-    for (const cardId of added) {
-      if (!savedCards.some(c => c.card_id === cardId)) {
-        try {
-          const res = await cardsAPI.save(user.user_id, cardId, '', '')
-          if (res.data?.success) {
-            setSavedCards(prev => [res.data.card, ...prev])
-          }
-        } catch {}
-      }
-    }
-    // Remove deselected cards from DB
-    for (const cardId of removed) {
-      const dbCard = savedCards.find(c => c.card_id === cardId)
-      if (dbCard) {
-        try {
-          await cardsAPI.remove(user.user_id, dbCard.id)
-          setSavedCards(prev => prev.filter(c => c.id !== dbCard.id))
-        } catch {}
-      }
-    }
-  }
-
   const handleDeleteCard = async (cardDbId, cardId) => {
     if (!user?.user_id) return
     try {
@@ -330,7 +301,7 @@ export default function SmartCash() {
       <CardSelector
         availableCards={availableCards}
         selectedIds={selectedWallet}
-        onChange={handleWalletChange}
+        onChange={setSelectedWallet}
         currency={currency}
       />
 
