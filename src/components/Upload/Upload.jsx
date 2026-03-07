@@ -302,6 +302,12 @@ export default function Upload() {
             transactions={transactions}
             onScan={() => runScan(guardCats)}
             onRemoveCat={removeGuardCat}
+            onClear={() => {
+              setGuardTxn('10000')
+              setGuardMonthly('50000')
+              setGuardCats([])
+              setScannedTxns([])
+            }}
           />
           <SummaryCards S={S} summary={summary} transactions={transactions} scannedTxns={scannedTxns} />
           <FlaggedTable S={S} scannedTxns={scannedTxns} transactions={transactions} />

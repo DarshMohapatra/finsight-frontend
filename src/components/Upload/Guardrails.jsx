@@ -1,6 +1,6 @@
 export default function Guardrails({ S, guardTxn, setGuardTxn, guardMonthly, setGuardMonthly,
   guardCats, setGuardCats,
-  transactions, onScan, onRemoveCat }) {
+  transactions, onScan, onRemoveCat, onClear }) {
 
   return (
     <div className="mb-8 p-4 md:p-5 bg-amber-500/[0.06] border border-amber-500/[0.15] rounded-xl">
@@ -56,15 +56,26 @@ export default function Guardrails({ S, guardTxn, setGuardTxn, guardMonthly, set
 
       </div>
 
-      <button onClick={onScan}
-        style={{ marginTop:4, padding:'10px 32px',
-          background:'linear-gradient(135deg,#f59e0b,#f97316)',
-          border:'none', borderRadius:10, color:'#000',
-          fontWeight:700, fontSize:13, cursor:'pointer',
-          fontFamily:'inherit', display:'inline-flex', alignItems:'center', gap:8,
-          boxShadow:'0 0 24px rgba(245,158,11,0.3)' }}>
-        Scan Transactions
-      </button>
+      <div className="flex flex-wrap gap-3">
+        <button onClick={onScan}
+          style={{ marginTop:4, padding:'10px 32px',
+            background:'linear-gradient(135deg,#f59e0b,#f97316)',
+            border:'none', borderRadius:10, color:'#000',
+            fontWeight:700, fontSize:13, cursor:'pointer',
+            fontFamily:'inherit', display:'inline-flex', alignItems:'center', gap:8,
+            boxShadow:'0 0 24px rgba(245,158,11,0.3)' }}>
+          Scan Transactions
+        </button>
+        <button onClick={onClear}
+          style={{ marginTop:4, padding:'10px 24px',
+            background:'rgba(255,255,255,0.04)',
+            border:'1px solid rgba(255,255,255,0.12)',
+            borderRadius:10, color:'rgba(255,255,255,0.5)',
+            fontWeight:600, fontSize:13, cursor:'pointer',
+            fontFamily:'inherit', display:'inline-flex', alignItems:'center', gap:6 }}>
+          Clear
+        </button>
+      </div>
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Shield, Mail, Eye, Trash2, Send, Loader2 } from 'lucide-react'
 
 const PERMISSIONS = [
@@ -13,7 +14,7 @@ const HOW_IT_WORKS = [
   { n:'4', text:'Your OAuth token is revoked the moment you close this dialog' },
 ]
 
-export default function GmailIntroStep({ onConnect, loading, error }) {
+export default function GmailIntroStep({ onConnect, loading, error, months, setMonths }) {
   return (
     <div style={{ padding: '28px 28px 24px' }}>
 
@@ -90,6 +91,22 @@ export default function GmailIntroStep({ onConnect, loading, error }) {
             Google Account → Security
           </a>.
         </p>
+      </div>
+
+      {/* Time range */}
+      <div style={{ marginBottom:16 }}>
+        <div style={{ fontSize:10, fontFamily:"'DM Mono',monospace", color:'rgba(255,255,255,0.3)',
+          letterSpacing:2, marginBottom:8 }}>SCAN RANGE</div>
+        <select value={months} onChange={e => setMonths(Number(e.target.value))}
+          style={{ width:'100%', boxSizing:'border-box',
+            background:'rgba(255,255,255,0.04)',
+            border:'1px solid rgba(255,255,255,0.1)',
+            borderRadius:10, padding:'10px 14px',
+            color:'#fff', fontSize:13, fontFamily:'inherit', outline:'none' }}>
+          <option value={3} style={{ background:'#0d1117' }}>Past 3 months</option>
+          <option value={6} style={{ background:'#0d1117' }}>Past 6 months</option>
+          <option value={12} style={{ background:'#0d1117' }}>Past 1 year</option>
+        </select>
       </div>
 
       {/* Error */}

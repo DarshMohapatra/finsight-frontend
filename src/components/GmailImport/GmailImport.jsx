@@ -21,6 +21,7 @@ export default function GmailImport({ onImported, onClose }) {
   const [selected, setSelected] = useState(null)   // { message_id, attachment_id, filename, bank_name }
   const [result,   setResult]   = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
+  const [months,   setMonths]   = useState(6)
 
   // ── Step: intro → trigger Google OAuth ───────────────────────
   function handleConnect() {
@@ -35,7 +36,7 @@ export default function GmailImport({ onImported, onClose }) {
   async function handleTokenReady(accessToken) {
     setStep('scanning')
     try {
-      const res = await api.post('/api/gmail/scan', { access_token: accessToken })
+      const res = await api.post('/api/gmail/scan', { access_token: accessToken, months })
       if (!res.data.success) throw new Error(res.data.error)
       setEmails(res.data.emails || [])
       setStep(res.data.emails?.length > 0 ? 'pick' : 'empty')
@@ -182,6 +183,8 @@ export default function GmailImport({ onImported, onClose }) {
             onConnect={handleConnect}
             loading={tokenLoading}
             error={tokenError}
+            months={months}
+            setMonths={setMonths}
           />
         )}
 

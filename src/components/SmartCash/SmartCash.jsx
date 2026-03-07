@@ -303,6 +303,21 @@ export default function SmartCash() {
         selectedIds={selectedWallet}
         onChange={setSelectedWallet}
         currency={currency}
+        onSaveCard={user?.user_id ? async (cardId, cardNum, nickname) => {
+          setSavingCard(true)
+          try {
+            const res = await cardsAPI.save(user.user_id, cardId, cardNum, nickname)
+            if (res.data?.success) {
+              setSavedCards([res.data.card, ...savedCards])
+            } else {
+              setError(res.data?.error || 'Failed to save card')
+            }
+          } catch {
+            setError('Failed to save card — please try again.')
+          }
+          setSavingCard(false)
+        } : null}
+        savingCard={savingCard}
       />
 
       <button
