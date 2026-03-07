@@ -84,31 +84,6 @@ export default function Dashboard() {
     return Object.entries(monthly).sort().map(([,v])=>v)
   }, [yearTxns])
 
-  // Stacked monthly data by category (top 6 + Other)
-  const { stackedCatData, topCategories } = useMemo(() => {
-    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    const catSpend = {}
-    yearTxns.filter(t => t['WITHDRAWAL AMT'] > 0).forEach(t => {
-      catSpend[t.CATEGORY] = (catSpend[t.CATEGORY] || 0) + t['WITHDRAWAL AMT']
-    })
-    const topCats = Object.entries(catSpend).sort((a,b) => b[1] - a[1]).slice(0, 6).map(([c]) => c)
-    const monthly = {}
-    yearTxns.forEach(t => {
-      const m = t.DATE?.substring(0, 7)
-      if (!m || !(t['WITHDRAWAL AMT'] > 0)) return
-      const label = MONTHS[parseInt(m.split('-')[1]) - 1]
-      if (!monthly[m]) monthly[m] = { month: label }
-      const cat = topCats.includes(t.CATEGORY) ? t.CATEGORY : 'Other'
-      monthly[m][cat] = (monthly[m][cat] || 0) + t['WITHDRAWAL AMT']
-    })
-    const allCats = [...topCats]
-    if (Object.values(monthly).some(m => m['Other'] > 0)) allCats.push('Other')
-    return {
-      stackedCatData: Object.entries(monthly).sort().map(([, v]) => v),
-      topCategories: allCats
-    }
-  }, [yearTxns])
-
   // Stacked monthly data by source file (bank/card statement)
   const { stackedSourceData, sourceFiles } = useMemo(() => {
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
@@ -188,10 +163,9 @@ export default function Dashboard() {
         <CategoryChart data={categoryData} currency={currency} />
       </div>
 
-      {/* Monthly spend stacked bar */}
+      {/* Monthly spend bar — bank-wise stacked when multiple statements */}
       <MonthlyChart
-        catData={stackedCatData}
-        categories={topCategories}
+        data={monthlyData}
         currency={currency}
         sourceData={stackedSourceData}
         sourceFiles={sourceFiles}

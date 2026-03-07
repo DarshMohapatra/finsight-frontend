@@ -72,8 +72,8 @@ export default function SmartCash() {
       } else {
         setError(res.data?.error || 'Failed to save card')
       }
-    } catch {
-      setError('Failed to save card. Make sure the saved_cards table exists in your database.')
+    } catch (e) {
+      setError('Failed to save card — please try again.')
     }
     setSavingCard(false)
   }

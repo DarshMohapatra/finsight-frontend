@@ -78,9 +78,9 @@ export default function Upload() {
   }
 
   // ── Guardrails ────────────────────────────────────────────────
-  // Feature 2: if watch categories selected → ONLY filter by those
-  //            if none selected → use per-txn + monthly limits
-  // Feature 3: filter by source file (card/bank) if selected
+  // All checks run simultaneously. Watch categories add to flagging.
+  // When watch cats are selected, flagged results prioritize those categories.
+  // Source filter limits to a specific card/bank statement.
   function runScan(cats = guardCats, source = guardSource) {
     const txnLimit     = parseInt(guardTxn.replace(/,/g,''))     || 10000
     const monthlyLimit = parseInt(guardMonthly.replace(/,/g,'')) || 50000
@@ -99,32 +99,40 @@ export default function Upload() {
       }
     })
 
-    const useWatchMode = cats.length > 0
+    const hasWatchCats = cats.length > 0
 
     const scanned = pool.map(t => {
       const reasons = []; let level = t.ALERT_LEVEL || 0
 
-      if (useWatchMode) {
-        // Strict watch-category mode: only flag transactions in watched categories
-        if (cats.includes(t.CATEGORY) && t['WITHDRAWAL AMT'] > 0) {
-          reasons.push(`'${t.CATEGORY}' is on your watch list`)
-          if (level < 2) level = 2
-        }
-      } else {
-        // Default mode: per-txn and monthly limits
-        if (t['WITHDRAWAL AMT'] >= txnLimit) {
-          reasons.push(`${S}${t['WITHDRAWAL AMT'].toLocaleString()} exceeds ${S}${txnLimit.toLocaleString()} per-txn limit`)
-          if (level < 2) level = 2
-        }
-        const month = t.DATE?.substring(0,7)
-        if (monthlyTotals[month] > monthlyLimit && t['WITHDRAWAL AMT'] > 0) {
-          reasons.push(`Month total ${S}${Math.round(monthlyTotals[month]).toLocaleString()} exceeds ${S}${monthlyLimit.toLocaleString()} budget`)
-          if (level < 1) level = 1
-        }
+      // Per-txn limit check
+      if (t['WITHDRAWAL AMT'] >= txnLimit) {
+        reasons.push(`${S}${t['WITHDRAWAL AMT'].toLocaleString()} exceeds ${S}${txnLimit.toLocaleString()} per-txn limit`)
+        if (level < 2) level = 2
+      }
+      // Watch category check
+      if (hasWatchCats && cats.includes(t.CATEGORY) && t['WITHDRAWAL AMT'] > 0) {
+        reasons.push(`'${t.CATEGORY}' is on your watch list`)
+        if (level < 2) level = 2
+      }
+      // Monthly budget check
+      const month = t.DATE?.substring(0,7)
+      if (monthlyTotals[month] > monthlyLimit && t['WITHDRAWAL AMT'] > 0) {
+        reasons.push(`Month total ${S}${Math.round(monthlyTotals[month]).toLocaleString()} exceeds ${S}${monthlyLimit.toLocaleString()} budget`)
+        if (level < 1) level = 1
       }
       return { ...t, _GUARD_LEVEL: level, _GUARD_REASON: reasons.join(' | ') || (t.ALERT_REASON || '') }
     })
-    setScannedTxns(scanned)
+
+    // When watch categories are active, show ONLY transactions from those categories in flagged list
+    if (hasWatchCats) {
+      const filtered = scanned.map(t => {
+        if (cats.includes(t.CATEGORY)) return t
+        return { ...t, _GUARD_LEVEL: 0, _GUARD_REASON: '' }
+      })
+      setScannedTxns(filtered)
+    } else {
+      setScannedTxns(scanned)
+    }
   }
 
   function removeGuardCat(cat) {
@@ -133,7 +141,6 @@ export default function Upload() {
     runScan(updated, guardSource)
   }
 
-  // Get unique source files for the filter
   const sourceFiles = [...new Set(transactions.map(t => t._source_file).filter(Boolean))]
 
   // ── Dropzone ──────────────────────────────────────────────────
@@ -213,7 +220,7 @@ export default function Upload() {
       </div>
 
       {/* Two secondary buttons */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop:12 }}>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginTop:12 }} className="!grid-cols-1 sm:!grid-cols-2">
 
         {/* Load Previous */}
         <button onClick={handleLoadPrevious} disabled={loadingCloud}
